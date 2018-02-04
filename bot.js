@@ -2,6 +2,10 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 var fs = require('fs');
 var apiai = require('apiai');
+var config = require('./config');
+var app = apiai(config.Dialogflow);
+console.log(config);
+
 
 let etat = "base";
 var choice = "pokemon";
@@ -58,7 +62,6 @@ let requestType = require('request');
     if(body.count <= 20){
     for(let t of body.results){
     listeType.push(t.name);
-        console.log(listeType);
     }
         
     } else {
@@ -111,7 +114,7 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
         if (msg.content.indexOf("type") !== -1 && msg.content.indexOf("normal") == -1 && msg.content.indexOf("fighting") == -1 && msg.content.indexOf("flying") == -1 && msg.content.indexOf("poison") == -1 && msg.content.indexOf("ground") == -1 && msg.content.indexOf("rock") == -1 && msg.content.indexOf("bug") == -1 && msg.content.indexOf("ghost") == -1 && msg.content.indexOf("steel") == -1 && msg.content.indexOf("fire") == -1 && msg.content.indexOf("water") == -1 && msg.content.indexOf("grass") == -1 && msg.content.indexOf("electric") == -1 && msg.content.indexOf("psychic") == -1 && msg.content.indexOf("ice") == -1 && msg.content.indexOf("dragon") == -1 && msg.content.indexOf("dark") == -1 && msg.content.indexOf("fairy") == -1 && msg.content.indexOf("unknow") == -1 && msg.content.indexOf("shadow") == -1)
         {
             if(msg.author.bot) return;
-            console.log("contient type MAIS pas fire ou water");
+            //console.log("contient type MAIS pas fire ou water");
             choice = "type";
             msg.channel.send("Quel est le type que vous cherchez ?");
         } 
@@ -121,8 +124,8 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
             if (msg.content.indexOf("type") !== -1 && msg.content.indexOf(type) !== -1 )
             {
                 if(msg.author.bot) return;
-                console.log("contient 'type' et un type de pokemon");
-                var choices = ["je vais chercher les pokemon de type "+type+", un instant", "Merci de ne pas pressez le bot", "savoir attendre est une qualité", "je me depeche de vous donner ça"];
+                //console.log("contient 'type' et un type de pokemon");
+                var choices = ["je vais chercher les pokemon de type "+type+", un instant", "Merci de ne pas presser le bot", "savoir attendre est une qualité", "je me depeche de vous donner ça"];
                 
                 ChooseChoice = choices[Math.floor(Math.random() * choices.length)];
                 
@@ -167,20 +170,18 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
                 
                 return;
               
-            } else console.log(" ne rentre pas dans le if");
+            } //else console.log(" ne rentre pas dans le if");
 
         }
                 if(etat == "chooseNamePart")
                     {
-                        console.log("etat = chooseNamePart");
+
                         for(let t of pokemonListOfType){
                             if (t.includes(msg.content)){
                                 if(msg.author.bot) return;
-                                console.log("t");
                                 msg.channel.send(t);
                                 etat = "none";
-
-                            }
+                            } 
                         }
                     }
         
@@ -283,6 +284,56 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
 								
 	} else console.log(choice);
 }); 
+
+
+
+
+
+
+
+/* dialoglow part */
+
+client.on('message', function(message){
+        if((message.cleanContent.startsWith("@" + client.user.username) || message.channel.type == 'dm') && client.user.id != message.author.id){
+        var mess = remove(client.user.username, message.cleanContent);
+        console.log(mess);
+        const user = message.author.id;
+        var promise = new Promise(function(resolve, reject) {
+            var request = app.textRequest(mess, {
+                sessionId: user
+            });
+            request.on('response', function(response) {
+                console.log(response);
+                var rep = response.result.fulfillment.speech;
+                resolve(rep);
+            });
+
+            request.on('error', function(error) {
+                resolve(null);
+            });
+
+            request.end();
+        });
+
+        (async function(){
+            var result = await promise;
+            if(result){
+                message.reply(result);
+            } else{
+                message.reply("nothing here");
+            }
+        }());
+
+    }
+});
+
+
+function remove(username, text){
+    return text.replace("@" + username + " ", "");
+}
+
+
+
 
 
 
