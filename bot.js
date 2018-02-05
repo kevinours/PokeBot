@@ -8,7 +8,7 @@ console.log(config);
 
 
 let etat = "base";
-var choice = "pokemon";
+var choice = "none";
 
 
 let url ='http://pokeapi.co/api/v2/pokemon?limit=949';
@@ -31,7 +31,7 @@ let request = require('request');
     if(body.count <= 949){
     for(let p of body.results){
     listePokemon.push(p.name);
-        //console.log(listePokemon);
+       // console.log(listePokemon);
     }
         
     } else {
@@ -71,12 +71,40 @@ let requestType = require('request');
     }
 );
 
+let urlNature ='http://pokeapi.co/api/v2/nature';
+let requestNature = require('request');
+var pokemonNature = [];
+
+    //Call API
+    requestType({
+        url: urlNature,
+        json: true
+    },
+
+    function(err, res, body){
+
+    if(err){
+        console.log('Erreur connexion API');
+        return;
+    }
+        
+    if(body.count <= 25){
+    for(let n of body.results){
+    pokemonNature.push(n.name);
+        console.log(pokemonNature);
+    }
+        
+    } else {
+    console.log('Aucune type trouvé avec ce nom');
+    }
+
+    }
+);
 
 
+//var listePokemon = ["bulbasaur", "pikachu", "mewtwo", "mew"];
 
-var listePokemon = ["bulbasaur", "pikachu", "mewtwo", "mew"];
-
-var listeType = ["fire", "water", "grass"];
+//var listeType = ["fire", "water", "grass"];
 	
 
 var pokemonListOfType = [];
@@ -91,7 +119,7 @@ client.on('ready', () => {
 	
     var channel = client.channels.get('409699064091901955');
     channel.send("Saisissez le nom d'un pokemon pour avoir sa ficher détaillée.");
-    channel.send("Ou décrivez un type, une capacité etc... pour trouver le pokemon que vous recherchez");
+    channel.send("Ou donner un type pour trouver le pokemon que vous recherchez");
 
 });
 
@@ -106,8 +134,7 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
 	console.log(n.name); }*/
 
 	
-	// type + "ok" qui sera le type décrit par l'utilisateur
-	//(msg.content.indexOf("type") !== -1 && msg.content.indexOf("ok") !== -1 )
+
 	
 	client.on('message', msg => {    
         // contient le mot "type" mais pas un type de pokemon
@@ -187,8 +214,8 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
         
 
         
-        if (msg.content == "pokemon"){
-            if(msg.author.bot) return;
+if (msg.content.indexOf("pokemon") !== -1 && msg.content.indexOf("nature") == -1){
+    if(msg.author.bot) return;
 			choice = "pokemon";
 			msg.channel.send("Quel est le pokemon que vous cherchez ?");
 		}
@@ -231,16 +258,14 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
                             msg.channel.send('Son poids est de '+body.weight);
                             msg.channel.send('Sa taille est de '+body.height);
 
-						} else {
-							console.log('Aucune pokemon trouvé avec ce nom');
-							}
+						} 
 
 						}
 						);
 
 					}
 
-				}
+				} //else msg.channel.send('Aucune pokemon trouvé avec ce nom');
                 }
 			
 
@@ -287,12 +312,73 @@ fs.readFile('pokemon.json', 'utf8', function (err, data) {
 
 
 
+// info sur les natures
+client.on('message', msg => {  
+ if (msg.content.indexOf("nature") !== -1 && msg.content.indexOf("hardy") == -1 && msg.content.indexOf("bold") == -1 && msg.content.indexOf("modest") == -1 && msg.content.indexOf("calm") == -1 && msg.content.indexOf("timid") == -1 && msg.content.indexOf("lonely") == -1 && msg.content.indexOf("docile") == -1 && msg.content.indexOf("mild") == -1 && msg.content.indexOf("gentle") == -1 && msg.content.indexOf("hasty") == -1 && msg.content.indexOf("adamant") == -1 && msg.content.indexOf("impish") == -1 && msg.content.indexOf("bashful") == -1 && msg.content.indexOf("careful") == -1 && msg.content.indexOf("rash") == -1 && msg.content.indexOf("jolly") == -1 && msg.content.indexOf("naughty") == -1 && msg.content.indexOf("lax") == -1 && msg.content.indexOf("quirky") == -1 && msg.content.indexOf("naive") == -1)
+    {
+        if(msg.author.bot) return;
+        let url ='http://pokeapi.co/api/v2/nature';
+        let request = require('request');
 
+        //Call API
+        request({
+            url: url,
+            json: true
+        },
+        function(err, res, body){
 
+        if(err){
+            console.log('Erreur connexion API');
+            return;
+        }
+            msg.channel.send("De quelle nature voulez vous avoir les infos ?");
+        
+        }
+    );
+    
+ }
+    
+// if (msg.content.indexOf("hardy") !== -1 || msg.content.indexOf("bold") !== -1 || msg.content.indexOf("modest") !== -1 || msg.content.indexOf("calm") !== -1 || msg.content.indexOf("timid") !== -1 || msg.content.indexOf("lonely") !== -1 || msg.content.indexOf("docile") !== -1 || msg.content.indexOf("mild") !== -1 || msg.content.indexOf("gentle") !== -1 || msg.content.indexOf("hasty") !== -1 || msg.content.indexOf("adamant") !== -1 || msg.content.indexOf("impish") !== -1 || msg.content.indexOf("bashful") !== -1 || msg.content.indexOf("careful") !== -1 || msg.content.indexOf("rash") !== -1 || msg.content.indexOf("jolly") !== -1 || msg.content.indexOf("naughty") !== -1 || msg.content.indexOf("lax") !== -1 || msg.content.indexOf("quirky") !== -1 || msg.content.indexOf("naive") !== -1)    {
+//                     msg.channel.send("ok");
 
+// }
+    
+    for(let n of pokemonNature){
+        if(msg.content.indexOf(n) !== -1){
+            if(msg.author.bot) return;
+           	let url ='http://pokeapi.co/api/v2/nature/'+n;
+						let request = require('request');
+
+						//Call API
+						request({
+							url: url,
+							json: true
+						},
+						function(err, res, body){
+
+						if(err){
+							console.log('Erreur connexion API');
+							return;
+						}
+                            var plus = 0;
+						if(body.name == n){
+                            for(let p of body.pokeathlon_stat_changes){
+                                if(plus == 0)
+                                    msg.channel.send("- "+p.pokeathlon_stat.name);
+                                else
+                                    msg.channel.send("+ "+p.pokeathlon_stat.name);
+                                plus++;
+                            }
+                        }
+                        }
+                                );
+        }
+    }
+ });
 
 /* dialoglow part */
 
+/*
 client.on('message', function(message){
         if((message.cleanContent.startsWith("@" + client.user.username) || message.channel.type == 'dm') && client.user.id != message.author.id){
         var mess = remove(client.user.username, message.cleanContent);
@@ -333,7 +419,7 @@ function remove(username, text){
 }
 
 
-
+*/
 
 
 
