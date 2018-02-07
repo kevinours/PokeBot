@@ -31,7 +31,7 @@ let request = require('request');
     if(body.count <= 949){
     for(let p of body.results){
     listePokemon.push(p.name);
-       // console.log(listePokemon);
+        console.log(listePokemon);
     }
         
     } else {
@@ -62,6 +62,8 @@ let requestType = require('request');
     if(body.count <= 20){
     for(let t of body.results){
     listeType.push(t.name);
+    console.log(listeType);
+
     }
         
     } else {
@@ -338,10 +340,6 @@ client.on('message', msg => {
     
  }
     
-// if (msg.content.indexOf("hardy") !== -1 || msg.content.indexOf("bold") !== -1 || msg.content.indexOf("modest") !== -1 || msg.content.indexOf("calm") !== -1 || msg.content.indexOf("timid") !== -1 || msg.content.indexOf("lonely") !== -1 || msg.content.indexOf("docile") !== -1 || msg.content.indexOf("mild") !== -1 || msg.content.indexOf("gentle") !== -1 || msg.content.indexOf("hasty") !== -1 || msg.content.indexOf("adamant") !== -1 || msg.content.indexOf("impish") !== -1 || msg.content.indexOf("bashful") !== -1 || msg.content.indexOf("careful") !== -1 || msg.content.indexOf("rash") !== -1 || msg.content.indexOf("jolly") !== -1 || msg.content.indexOf("naughty") !== -1 || msg.content.indexOf("lax") !== -1 || msg.content.indexOf("quirky") !== -1 || msg.content.indexOf("naive") !== -1)    {
-//                     msg.channel.send("ok");
-
-// }
     
     for(let n of pokemonNature){
         if(msg.content.indexOf(n) !== -1){
@@ -372,7 +370,7 @@ client.on('message', msg => {
                         }
                         }
                                 );
-        }
+        } choice = "pokemon";
     }
  });
 
